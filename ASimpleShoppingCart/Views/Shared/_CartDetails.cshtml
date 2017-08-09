@@ -1,0 +1,99 @@
+﻿@model ASimpleShoppingCart.Models.ProductModel
+<div id="cart">
+    <table style="border:1px solid #000; text-align:center; margin:10px auto;" class="table-bordered">
+        <thead>
+            <tr>
+
+                <td>Product Name</td>
+                <td>Product Quantity</td>
+                <td>Product price</td>
+                <td>Subtotal</td>
+                <td>Remarks</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{foreach (var item in ViewBag.itemz.Keys)
+            {
+                <tr>
+
+                    <td>@item</td>
+                    <td>
+                        @using (Ajax.BeginForm("AddToCart", "Home", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "cart" }, new {@class="col-md-6", style = " padding:0; margin:0;" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="col-md-12" style="padding: 0 !important; margin: 0 !important;">
+                            @Html.ValidationSummary(true)
+
+                            <div class="" style="margin: 0; padding:0;">
+                                <div class="col-md-6 col-md-push-3" style="padding:0; margin:0;">
+
+                                    @Html.HiddenFor(model => model.ProductPrice, new { @Value = ViewBag.itemz[item]["Price"] })
+                                    @Html.TextBoxFor(model => model.ProductQuantity, new { @Value = ViewBag.itemz[item]["Quantity"] })
+                                    @Html.HiddenFor(model => model.ProductName, new { @Value = item })
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+
+                            <div class="" style="visibility:hidden;">
+                                <div class="col-md-offset-2 col-md-8" style="padding: 0; margin: 0; height: 0; width: 0; ">
+                                    
+                                        <input type="submit" value="Add" class="btn btn-default form-control" id="Add" />
+                                    
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    }
+                        <div class="col-md-4 col-md-push-2">
+                            @Ajax.ActionLink("++", "AddItemToCart", new { Item = item }, new AjaxOptions
+                   {
+                       HttpMethod = "GET",
+                       InsertionMode = InsertionMode.Replace,
+                       UpdateTargetId = "cart",
+
+                   })<br />
+
+                            @Ajax.ActionLink("--", "RemoveFromCart", new { Item = item }, new AjaxOptions
+                   {
+                       HttpMethod = "GET",
+                       InsertionMode = InsertionMode.Replace,
+                       UpdateTargetId = "cart",
+
+                   })
+                        </div>
+                    </td>
+                    <td>@ViewBag.itemz[item]["Price"]</td>
+                    <td>@ViewBag.itemz[item]["Subtotal"]</td>
+                    <td>
+                        @Ajax.ActionLink("Remove", "RemoveAll", new { Item = item }, new AjaxOptions
+                   {
+                       HttpMethod = "GET",
+                       InsertionMode = InsertionMode.Replace,
+                       UpdateTargetId = "cart",
+
+                   })
+                        <div class="clearfix"></div>
+                    </td>
+               
+
+                </tr>
+
+            }
+            }
+        </tbody>
+    </table>
+    <div class="col-md-6 col-md-push-6" style="margin-top:25px; padding:0; padding-top:10px;">
+        <p><span style="float:left;">SHIPPING & HANDLING</span> <span style="float:right;">FREE</span></p>
+        <p class="clearfix"></p>
+        <p><span style="float:left;">PRODUCT TOTAL</span><span style="float:right;"><i>$@ViewBag.Totalprice </i></span></p>
+        <p class="clearfix"></p>
+        <hr />
+        <p><span style="float:left;">SUBTOTAL</span><span style="float:right;"><i>$@ViewBag.Totalprice</i> </span></p>
+        <p class="clearfix"></p>
+        <button class="btn btn-default" style="float:right;" id="brn">PROCEED TO CHECKOUT</button>
+        <p class="clearfix"></p>
+    </div>
+    <div class="clearfix"></div>
+</div>
